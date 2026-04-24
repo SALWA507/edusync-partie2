@@ -1,6 +1,6 @@
 <?php
 session_start();
-
+require("../public/conne.php");
 if (isset($_POST['register'])) {
 
     $nom = $_POST['nom'];
@@ -17,6 +17,11 @@ if (isset($_POST['register'])) {
         header("Location: ../public/register.php?error=email");
         exit();
     }
+    $sql = "INSERT INTO users (firstname, lastname, email, password,role_id)
+            VALUES (:firstname, :lastname, :email, :password,:role_id)";
+
+    $stmt = $pdo->prepare($sql);
+    $stmt->execute(['firstname' => $nom, 'lastname' => $prenom, 'email' => $email, 'password' => $password, 'role_id' => 2]);
 
     $nom = htmlspecialchars($nom);
     $prenom = htmlspecialchars($prenom);
@@ -34,13 +39,11 @@ if (isset($_POST['register'])) {
     exit();
 }
 
-
 if (isset($_POST['login'])) {
 
     $email = $_POST['email'];
     $password = $_POST['password'];
 
-    // Vérifier champs vides
     if (empty($email) || empty($password)) {
         header("Location: ../public/login.php?error=empty");
         exit();
